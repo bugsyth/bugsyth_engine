@@ -60,7 +60,7 @@ impl Context {
         self.programs.insert(name.into(), program);
     }
 
-    pub fn get_program(&mut self, name: impl Into<String>) -> Option<&Program> {
+    pub fn get_program(&self, name: impl Into<String>) -> Option<&Program> {
         self.programs.get(&name.into())
     }
 }

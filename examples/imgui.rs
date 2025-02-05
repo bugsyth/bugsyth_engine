@@ -110,7 +110,7 @@ impl GameState for Game {
             .prepare_frame(self.imgui.context.io_mut(), &ctx.window)
             .unwrap();
         let ui = self.imgui.context.frame();
-        // let ui = self.imgui.get_ui(&ctx.window);
+
         ui.window("imgui")
             .size(
                 [250.0, 150.0],
@@ -133,8 +133,6 @@ impl GameState for Game {
             .renderer
             .render(renderer.get_surface_mut(), draw_data)
             .unwrap();
-        // self.imgui
-        //     .render(&ui, renderer.get_surface_mut(), &ctx.window);
     }
     fn event(&mut self, ctx: &mut Context, event: &WindowEvent) {
         self.imgui.event(&ctx.window, event);
