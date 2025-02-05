@@ -31,9 +31,7 @@ fn main() -> EngineResult {
     ",
         "
     #version 140
-
-    const int max_lights = 100;
-
+    
     in vec3 v_position;
     in vec3 v_normal;
 
