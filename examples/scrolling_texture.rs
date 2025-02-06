@@ -1,3 +1,5 @@
+// Also an example of displacement mapping
+
 use bugsyth_engine::prelude::*;
 use glium::{
     implement_vertex,
@@ -130,8 +132,9 @@ impl GameState for Game {
                 &uniform! {
                     persp: ctx.camera.get_perspective(),
                     view: ctx.camera.get_view(),
-                    u_tex: self.texture.get_texture(),
-                    u_displacement: self.displacement.get_texture(),
+                    u_tex: self.texture.get_texture_no_filtering(),
+                    // Turn off filtering to have a sharp displacement map
+                    u_displacement: self.displacement.get_texture_no_filtering(),
                     u_time: self.time,
                     u_direction: self.direction,
                 },
