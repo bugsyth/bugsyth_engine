@@ -54,6 +54,7 @@ impl FXAA {
         })
     }
 
+    /// Sends a program call 'fxaa' to the Context
     pub fn send_program(ctx: &mut Context) -> EngineResult {
         ctx.add_program(
             "fxaa",

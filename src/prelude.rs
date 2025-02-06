@@ -5,6 +5,6 @@ pub use crate::{
     init,
     math::*,
     obj,
-    renderer::{drawable::Drawable, texture::Texture, Renderer},
+    renderer::{drawable::Drawable, skybox::Skybox, texture::Texture, Renderer},
     rng, run,
 };

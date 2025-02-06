@@ -1,10 +1,14 @@
 use crate::{context::Context, error::EngineResult};
-use glium::texture::{CompressedTexture2d, RawImage2d};
+use glium::{
+    texture::RawImage2d,
+    uniforms::{MagnifySamplerFilter, MinifySamplerFilter, Sampler},
+    Texture2d,
+};
 use image::ImageReader;
 use std::path::Path;
 
 pub struct Texture {
-    texture: CompressedTexture2d,
+    texture: Texture2d,
 }
 
 impl Texture {
@@ -13,10 +17,19 @@ impl Texture {
         let img_dimensions = img.dimensions();
         let img = RawImage2d::from_raw_rgb_reversed(&img.into_raw(), img_dimensions);
         Ok(Self {
-            texture: CompressedTexture2d::new(&ctx.display, img)?,
+            texture: Texture2d::new(&ctx.display, img)?,
         })
     }
-    pub fn get_texture(&self) -> &CompressedTexture2d {
+    pub fn get_texture(&self) -> &Texture2d {
         &self.texture
+    }
+    pub fn get_texture_no_filtering(&self) -> Sampler<'_, Texture2d> {
+        self.get_texture()
+            .sampled()
+            .magnify_filter(MagnifySamplerFilter::Nearest)
+            .minify_filter(MinifySamplerFilter::Nearest)
+    }
+    pub fn get_texture_mut(&mut self) -> &mut Texture2d {
+        &mut self.texture
     }
 }

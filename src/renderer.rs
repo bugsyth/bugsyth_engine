@@ -4,6 +4,7 @@ use glium::{uniforms::Uniforms, Frame, Surface};
 
 pub mod drawable;
 pub mod fxaa;
+pub mod skybox;
 pub mod texture;
 
 pub trait Renderer {
