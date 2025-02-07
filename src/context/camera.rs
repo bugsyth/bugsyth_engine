@@ -101,18 +101,18 @@ impl CameraState {
         if ctx.input.is_key_pressed(KeyCode::ArrowUp)
             && ctx.camera.pitch <= PI / 2.0 - 0.01 - cam_rot_speed / 1000.0
         {
-            ctx.camera.pitch += cam_rot_speed / 1000.0;
+            ctx.camera.pitch += cam_rot_speed / 1000.0 * dt;
         }
         if ctx.input.is_key_pressed(KeyCode::ArrowLeft) {
-            ctx.camera.yaw -= cam_rot_speed / 1000.0;
+            ctx.camera.yaw -= cam_rot_speed / 1000.0 * dt;
         }
         if ctx.input.is_key_pressed(KeyCode::ArrowDown)
             && ctx.camera.pitch >= -PI / 2.0 + 0.01 + cam_rot_speed / 1000.0
         {
-            ctx.camera.pitch -= cam_rot_speed / 1000.0;
+            ctx.camera.pitch -= cam_rot_speed / 1000.0 * dt;
         }
         if ctx.input.is_key_pressed(KeyCode::ArrowRight) {
-            ctx.camera.yaw += cam_rot_speed / 1000.0;
+            ctx.camera.yaw += cam_rot_speed / 1000.0 * dt;
         }
 
         /*
