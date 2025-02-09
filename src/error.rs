@@ -1,5 +1,8 @@
 use std::io;
 
+use cpal::{
+    BuildStreamError, DefaultStreamConfigError, DeviceNameError, DevicesError, PlayStreamError,
+};
 use glium::{
     framebuffer::{RenderBufferCreationError, ValidationError},
     index,
@@ -11,6 +14,7 @@ use glium::{
 };
 use image::ImageError;
 use obj::ObjError;
+use wav_io::reader::DecodeError;
 
 pub type EngineResult<T = ()> = Result<T, EngineError>;
 #[derive(Debug)]
@@ -18,6 +22,7 @@ pub enum EngineError {
     GliumError(String),
     ImageError(String),
     ObjError(String),
+    AudioError(String),
     IoError(String),
 }
 impl std::error::Error for EngineError {}
@@ -28,6 +33,7 @@ impl std::fmt::Display for EngineError {
             Self::GliumError(msg) => write!(f, "{}", msg),
             Self::ImageError(msg) => write!(f, "{}", msg),
             Self::ObjError(msg) => write!(f, "{}", msg),
+            Self::AudioError(msg) => write!(f, "{}", msg),
             Self::IoError(msg) => write!(f, "{}", msg),
             _ => write!(f, "Unknown Error"),
         }
@@ -99,5 +105,39 @@ impl From<ObjError> for EngineError {
 impl From<io::Error> for EngineError {
     fn from(value: io::Error) -> Self {
         Self::IoError(value.to_string())
+    }
+}
+
+// cpal
+impl From<DevicesError> for EngineError {
+    fn from(value: DevicesError) -> Self {
+        Self::AudioError(value.to_string())
+    }
+}
+impl From<DeviceNameError> for EngineError {
+    fn from(value: DeviceNameError) -> Self {
+        Self::AudioError(value.to_string())
+    }
+}
+impl From<DefaultStreamConfigError> for EngineError {
+    fn from(value: DefaultStreamConfigError) -> Self {
+        Self::AudioError(value.to_string())
+    }
+}
+impl From<BuildStreamError> for EngineError {
+    fn from(value: BuildStreamError) -> Self {
+        Self::AudioError(value.to_string())
+    }
+}
+impl From<PlayStreamError> for EngineError {
+    fn from(value: PlayStreamError) -> Self {
+        Self::AudioError(value.to_string())
+    }
+}
+
+// wav-io
+impl From<DecodeError> for EngineError {
+    fn from(value: DecodeError) -> Self {
+        Self::AudioError(value.to_string())
     }
 }

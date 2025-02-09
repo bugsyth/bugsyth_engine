@@ -1,10 +1,4 @@
 use bugsyth_engine::prelude::*;
-use glium::{
-    index::{IndicesSource, NoIndices, PrimitiveType},
-    uniform,
-    vertex::{MultiVerticesSource, VertexBufferAny},
-    BackfaceCullingMode, Depth, DepthTest, DrawParameters,
-};
 
 fn main() -> EngineResult {
     let (event_loop, mut ctx) = init("lighting", (960, 720))?;

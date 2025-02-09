@@ -1,10 +1,4 @@
 use bugsyth_engine::prelude::*;
-use glium::{
-    index::{IndicesSource, NoIndices, PrimitiveType},
-    uniform,
-    vertex::{MultiVerticesSource, VertexBufferAny},
-    BackfaceCullingMode, Depth, DepthTest, DrawParameters,
-};
 
 fn main() -> EngineResult {
     let (event_loop, mut ctx) = init("obj_file", (960, 720))?;
@@ -65,7 +59,7 @@ impl GameState for Game {
         bugsyth_engine::context::camera::CameraState::free_cam(ctx.dt, ctx, 1.0, 1.0);
     }
     fn draw(&mut self, ctx: &mut Context, renderer: &mut impl Renderer) {
-        renderer.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
+        renderer.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
         renderer
             .draw(
                 ctx,

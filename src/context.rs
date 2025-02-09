@@ -6,7 +6,7 @@ use input::Input;
 use std::{collections::HashMap, f32::consts::PI};
 use vek::Vec3;
 
-mod audio;
+pub mod audio;
 pub mod camera;
 mod input;
 
@@ -27,7 +27,7 @@ impl Context {
             window,
             display,
             input: Input::new(),
-            audio: Audio::new(),
+            audio: Audio::new()?,
             camera: CameraState::new(
                 Vec3::zero(),
                 Vec3::zero(),

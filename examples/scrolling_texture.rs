@@ -1,14 +1,6 @@
 // Also an example of displacement mapping
 
 use bugsyth_engine::prelude::*;
-use glium::{
-    implement_vertex,
-    index::{IndicesSource, NoIndices, PrimitiveType},
-    uniform,
-    vertex::MultiVerticesSource,
-    winit::event::WindowEvent,
-    BackfaceCullingMode, Depth, DepthTest, DrawParameters, VertexBuffer,
-};
 
 fn main() -> EngineResult {
     let (event_loop, mut ctx) = init("scolling texture", (960, 720))?;

@@ -2,12 +2,6 @@ use bugsyth_engine::{
     prelude::*,
     renderer::fxaa::{FXAARenderer, FXAA},
 };
-use glium::{
-    index::{IndicesSource, NoIndices, PrimitiveType},
-    uniform,
-    vertex::{MultiVerticesSource, VertexBufferAny},
-    BackfaceCullingMode, Depth, DepthTest, DrawParameters,
-};
 
 fn main() -> EngineResult {
     let (event_loop, mut ctx) = init("fxaa", (960, 720))?;

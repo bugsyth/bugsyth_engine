@@ -1,11 +1,4 @@
 use bugsyth_engine::prelude::*;
-use glium::{
-    implement_vertex,
-    index::{IndicesSource, NoIndices, PrimitiveType},
-    uniform,
-    vertex::MultiVerticesSource,
-    DrawParameters, VertexBuffer,
-};
 
 #[derive(Clone, Copy)]
 struct Vertex {
