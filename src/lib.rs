@@ -35,6 +35,7 @@ pub fn init(
 
 pub fn run(game: impl GameState, event_loop: EventLoop<()>, ctx: Context) -> EngineResult {
     let mut app = AppWrapper::new(game, ctx);
+    app.game.init(&mut app.ctx);
     event_loop.run_app(&mut app)?;
     Ok(())
 }

@@ -10,8 +10,8 @@ use glium::winit::{
 use super::dt::DeltaTime;
 
 pub struct AppWrapper<G> {
-    ctx: Context,
-    game: G,
+    pub ctx: Context,
+    pub game: G,
     dt: DeltaTime,
 }
 
