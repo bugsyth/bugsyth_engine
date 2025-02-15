@@ -1,13 +1,13 @@
 use physics_object::PhysicsObject;
 use shapes::Shape;
 use solutions::solve_collision;
-use std::{cell::RefCell, collections::HashMap, ptr, rc::Rc};
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use tests::test_collision;
 
 pub mod physics_object;
 pub mod shapes;
-mod solutions;
-mod tests;
+pub mod solutions;
+pub mod tests;
 
 pub struct World {
     objects: HashMap<u32, Rc<RefCell<PhysicsObject>>>,

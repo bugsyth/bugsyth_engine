@@ -21,7 +21,7 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new(window: Window, display: Display<WindowSurface>) -> EngineResult<Self> {
+    pub(crate) fn new(window: Window, display: Display<WindowSurface>) -> EngineResult<Self> {
         let window_size = window.inner_size();
         Ok(Self {
             window,
@@ -58,6 +58,9 @@ impl Context {
 
     pub fn add_program(&mut self, name: impl Into<String>, program: Program) {
         self.programs.insert(name.into(), program);
+    }
+    pub fn remove_program(&mut self, name: impl Into<String>) {
+        self.programs.remove(&name.into());
     }
 
     pub fn get_program(&self, name: impl Into<String>) -> Option<&Program> {

@@ -1,7 +1,7 @@
 use crate::{context::Context, renderer::Renderer};
 use glium::winit::event::WindowEvent;
 
-pub mod app_wrapper;
+pub(crate) mod app_wrapper;
 mod dt;
 
 #[allow(unused_variables)]
