@@ -5,6 +5,7 @@ edition = "2021"
 repository = "https://github.com/bugsyth/bugsyth_engine"
 license = "MIT OR Apache-2.0"
 description = "little engine using glium"
+readme = "README.md"
 
 [dependencies]
 # Graphics
