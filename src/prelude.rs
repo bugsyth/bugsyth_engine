@@ -13,7 +13,6 @@ pub use crate::{
     init,
     math::*,
     obj,
-    physics::{self, World},
     renderer::{drawable::Drawable, skybox::Skybox, texture::Texture, Renderer},
     rng, run,
 };

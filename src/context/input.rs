@@ -45,7 +45,7 @@ impl Input {
     }
 
     /// Must be called every window event
-    pub fn process_input(&mut self, event: &WindowEvent) {
+    pub(crate) fn process_input(&mut self, event: &WindowEvent) {
         if let WindowEvent::KeyboardInput { event, .. } = event {
             if let PhysicalKey::Code(key_code) = event.physical_key {
                 self.keys.insert(key_code, event.state);
@@ -64,7 +64,7 @@ impl Input {
 
     /// Used to set delta_mouse to (0.0, 0.0) since it will stay at whatever the previous mouse movement was if the mouse isn't moving
     /// Should be called at the end of a draw so that the value is read before being reset
-    pub fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
         self.delta_mouse = Vec2::zero();
     }
 }

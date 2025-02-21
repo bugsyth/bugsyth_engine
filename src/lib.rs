@@ -11,7 +11,6 @@ pub mod context;
 pub mod error;
 pub mod game_state;
 pub mod math;
-pub mod physics;
 pub mod prelude;
 pub mod renderer;
 

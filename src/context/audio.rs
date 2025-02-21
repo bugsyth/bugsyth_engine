@@ -15,7 +15,7 @@ pub struct Audio {
 }
 
 impl Audio {
-    pub fn new() -> EngineResult<Self> {
+    pub(crate) fn new() -> EngineResult<Self> {
         // Might need to add host to Audio later
         let host = cpal::default_host();
         let mut output_devices = HashMap::new();

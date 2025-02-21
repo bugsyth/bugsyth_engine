@@ -29,8 +29,8 @@ impl Context {
             input: Input::new(),
             audio: Audio::new()?,
             camera: CameraState::new(
-                Vec3::zero(),
-                Vec3::zero(),
+                Vec3::new(0.0, 0.0, 0.0),
+                Vec3::new(0.0, 0.0, 0.0),
                 Vec3::new(0.0, 1.0, 0.0),
                 PI / 2.0,
                 window_size.width as f32 / window_size.height as f32,
