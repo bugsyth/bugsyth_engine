@@ -1,8 +1,17 @@
-use std::time::{Duration, Instant};
+/*
+    The rng is the bottleneck in here
+    I don't know how to fix it since I can't use
+    par_iter with ThreadRng
+
+    Original BunnyMark (and sprite) by Iain Lobb
+*/
 
 use bugsyth_engine::prelude::*;
 use glium::{IndexBuffer, Surface};
 use rand::Rng;
+use rayon::iter::{
+    IndexedParallelIterator, IntoParallelRefIterator, IntoParallelRefMutIterator, ParallelIterator,
+};
 
 const INITIAL_BUNNIES: usize = 100;
 const MAX_X: f32 = 1.0;
@@ -138,8 +147,8 @@ struct Game {
 
 impl GameState for Game {
     fn update(&mut self, ctx: &mut Context) {
-        let random_y_boost: Vec<f32> = (0..self.bunnies.len())
-            .map(|_| self.rng.random::<f32>() * 0.075)
+        let random_y_boost: Vec<(bool, f32)> = (0..self.bunnies.len())
+            .map(|_| (self.rng.random::<bool>(), self.rng.random::<f32>() * 0.075))
             .collect();
         if ctx.input.is_key_pressed(KeyCode::Space) {
             for _ in 0..INITIAL_BUNNIES {
@@ -147,34 +156,37 @@ impl GameState for Game {
             }
         }
 
-        let mut ivbo_data = Vec::new();
-        for (i, bunny) in self.bunnies.iter_mut().enumerate() {
-            bunny.position += bunny.velocity;
-            bunny.velocity.y -= GRAVITY;
+        self.bunnies
+            .par_iter_mut()
+            .enumerate()
+            .for_each(|(i, bunny)| {
+                bunny.position += bunny.velocity;
+                bunny.velocity.y -= GRAVITY;
 
-            if bunny.position.x > MAX_X {
-                bunny.velocity.x *= -1.0;
-                bunny.position.x = MAX_X;
-            } else if bunny.position.x < -MAX_X {
-                bunny.velocity.x *= -1.0;
-                bunny.position.x = -MAX_X;
-            }
-
-            if bunny.position.y > MAX_Y {
-                bunny.velocity.y = 0.0;
-                bunny.position.y = MAX_Y;
-            } else if bunny.position.y < -MAX_Y {
-                bunny.velocity.y *= -0.8;
-                bunny.position.y = -MAX_Y;
-
-                if self.rng.random::<bool>() {
-                    bunny.velocity.y += random_y_boost[i];
+                if bunny.position.x > MAX_X || bunny.position.x < -MAX_X {
+                    bunny.velocity.x = -bunny.velocity.x;
+                    bunny.position.x = bunny.position.x.clamp(-MAX_X, MAX_X);
                 }
-            }
-            ivbo_data.push(Instance {
-                instance: [bunny.position.x, bunny.position.y],
+
+                if bunny.position.y > MAX_Y {
+                    bunny.velocity.y = 0.0;
+                    bunny.position.y = MAX_Y;
+                } else if bunny.position.y < -MAX_Y {
+                    bunny.velocity.y *= -0.8;
+                    bunny.position.y = -MAX_Y;
+
+                    if random_y_boost[i].0 {
+                        bunny.velocity.y += random_y_boost[i].1;
+                    }
+                }
             });
-        }
+        let ivbo_data: Vec<Instance> = self
+            .bunnies
+            .par_iter()
+            .map(|bunny| Instance {
+                instance: [bunny.position.x, bunny.position.y],
+            })
+            .collect();
         if ivbo_data.len() > self.ivbo.len() {
             self.ivbo = VertexBuffer::dynamic(&ctx.display, &ivbo_data).unwrap();
         } else {
