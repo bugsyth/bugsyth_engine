@@ -8,7 +8,6 @@
 
 use bugsyth_engine::prelude::*;
 use glium::{IndexBuffer, Surface};
-use rand::Rng;
 use rayon::iter::{
     IndexedParallelIterator, IntoParallelRefIterator, IntoParallelRefMutIterator, ParallelIterator,
 };
@@ -17,6 +16,11 @@ const INITIAL_BUNNIES: usize = 100;
 const MAX_X: f32 = 1.0;
 const MAX_Y: f32 = 1.0;
 const GRAVITY: f32 = 0.01;
+
+const BUNNY_WIDTH: f32 = 0.05;
+const BUNNY_HEIGHT: f32 = 0.08;
+const BUNNY_START_VEL: Vec2<f32> = Vec2::new(0.004, 0.004);
+const BUNNY_JUMP_AMOUNT: f32 = 0.065;
 
 #[derive(Clone, Copy)]
 struct Vertex {
@@ -37,11 +41,11 @@ struct Bunny {
 }
 
 impl Bunny {
-    fn new(rng: &mut rand::rngs::ThreadRng) -> Self {
-        let x_vel = rng.random::<f32>() * 0.1;
-        let y_vel = rng.random::<f32>() * 0.1;
+    fn new(rng: &mut rng::Rng) -> Self {
+        let x_vel = rng.f32() * BUNNY_START_VEL.x;
+        let y_vel = rng.f32() * BUNNY_START_VEL.y;
         Self {
-            position: Vec2::zero(),
+            position: Vec2::new(-1.0, 1.0 + BUNNY_HEIGHT),
             velocity: Vec2::new(x_vel, y_vel),
         }
     }
@@ -81,7 +85,7 @@ fn main() -> EngineResult {
     )
     .unwrap();
 
-    let mut rng = rand::rng();
+    let mut rng = rng::Rng::new();
     let bunnies: Vec<Bunny> = (0..INITIAL_BUNNIES).map(|_| Bunny::new(&mut rng)).collect();
     let vbo = VertexBuffer::new(
         &ctx.display,
@@ -91,15 +95,15 @@ fn main() -> EngineResult {
                 uv: [0.0, 0.0],
             },
             Vertex {
-                position: [0.1, 0.0],
+                position: [BUNNY_WIDTH, 0.0],
                 uv: [1.0, 0.0],
             },
             Vertex {
-                position: [0.1, 0.19],
+                position: [BUNNY_WIDTH, BUNNY_HEIGHT],
                 uv: [1.0, 1.0],
             },
             Vertex {
-                position: [0.0, 0.19],
+                position: [0.0, BUNNY_HEIGHT],
                 uv: [0.0, 1.0],
             },
         ],
@@ -142,13 +146,13 @@ struct Game {
     ibo: IndexBuffer<u16>,
     params: DrawParameters<'static>,
 
-    rng: rand::rngs::ThreadRng,
+    rng: rng::Rng,
 }
 
 impl GameState for Game {
-    fn update(&mut self, ctx: &mut Context) {
+    fn fixed_update(&mut self, ctx: &mut Context) {
         let random_y_boost: Vec<(bool, f32)> = (0..self.bunnies.len())
-            .map(|_| (self.rng.random::<bool>(), self.rng.random::<f32>() * 0.075))
+            .map(|_| (self.rng.bool(), self.rng.f32() * BUNNY_JUMP_AMOUNT))
             .collect();
         if ctx.input.is_key_pressed(KeyCode::Space) {
             for _ in 0..INITIAL_BUNNIES {
@@ -163,12 +167,12 @@ impl GameState for Game {
                 bunny.position += bunny.velocity;
                 bunny.velocity.y -= GRAVITY;
 
-                if bunny.position.x > MAX_X || bunny.position.x < -MAX_X {
+                if bunny.position.x > MAX_X - BUNNY_WIDTH || bunny.position.x < -MAX_X {
                     bunny.velocity.x = -bunny.velocity.x;
                     bunny.position.x = bunny.position.x.clamp(-MAX_X, MAX_X);
                 }
 
-                if bunny.position.y > MAX_Y {
+                if bunny.position.y > MAX_Y + BUNNY_HEIGHT {
                     bunny.velocity.y = 0.0;
                     bunny.position.y = MAX_Y;
                 } else if bunny.position.y < -MAX_Y {
@@ -199,6 +203,7 @@ impl GameState for Game {
             1.0 / ctx.dt
         ));
     }
+
     fn draw(&mut self, ctx: &mut Context, renderer: &mut impl Renderer) {
         renderer.clear_color(0.0, 0.0, 0.0, 1.0);
         let target = renderer.get_surface_mut();

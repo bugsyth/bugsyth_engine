@@ -17,6 +17,7 @@ pub struct Context {
     pub audio: Audio,
     pub camera: CameraState,
     pub dt: f32,
+    pub fixed_update: FixedUpdate,
     programs: HashMap<String, Program>,
 }
 
@@ -38,6 +39,10 @@ impl Context {
                 1000.0,
             ),
             dt: 0.0,
+            fixed_update: FixedUpdate {
+                accumulator: 0.0,
+                tick_rate: 0.0166,
+            },
             programs: HashMap::new(),
         })
     }
@@ -66,4 +71,11 @@ impl Context {
     pub fn get_program(&self, name: impl Into<String>) -> Option<&Program> {
         self.programs.get(&name.into())
     }
+}
+
+/// Change tick_rate to what you want it to be in your game
+/// Default is 0.0166 or 60 fps
+pub struct FixedUpdate {
+    pub(crate) accumulator: f32,
+    pub tick_rate: f32,
 }

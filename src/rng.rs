@@ -1,1 +1,1 @@
-pub use rand::*;
+pub use fastrand::*;

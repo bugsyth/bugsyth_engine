@@ -1,6 +1,6 @@
 [package]
 name = "bugsyth_engine"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 repository = "https://github.com/bugsyth/bugsyth_engine"
 license = "MIT OR Apache-2.0"
@@ -19,7 +19,10 @@ wav_io = "0.1.15"
 
 # Math
 vek = "0.17.1"
-rand = "0.9.0"
+fastrand = "2.3.0"
 
 # Multi Threading
 rayon = "1.10.0"
+
+[dev-dependencies]
+bugsyth_engine_imgui_support = "0.4.0"

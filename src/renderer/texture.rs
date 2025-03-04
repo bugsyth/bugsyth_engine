@@ -13,9 +13,9 @@ pub struct Texture {
 
 impl Texture {
     pub fn new(ctx: &Context, path: impl AsRef<Path>) -> EngineResult<Self> {
-        let img = ImageReader::open(path)?.decode()?.to_rgb8();
+        let img = ImageReader::open(path)?.decode()?.to_rgba8();
         let img_dimensions = img.dimensions();
-        let img = RawImage2d::from_raw_rgb_reversed(&img.into_raw(), img_dimensions);
+        let img = RawImage2d::from_raw_rgba_reversed(&img.into_raw(), img_dimensions);
         Ok(Self {
             texture: Texture2d::new(&ctx.display, img)?,
         })

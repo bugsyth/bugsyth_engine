@@ -35,8 +35,14 @@ where
         self.game.event(&mut self.ctx, &event);
         match event {
             WindowEvent::RedrawRequested => {
-                self.ctx.dt = self.dt.get_dt();
+                let dt = self.dt.get_dt();
+                self.ctx.dt = dt;
                 self.game.update(&mut self.ctx);
+                self.ctx.fixed_update.accumulator += dt;
+                while self.ctx.fixed_update.accumulator > self.ctx.fixed_update.tick_rate {
+                    self.game.fixed_update(&mut self.ctx);
+                    self.ctx.fixed_update.accumulator -= self.ctx.fixed_update.tick_rate;
+                }
                 self.ctx.camera.update();
                 let mut frame = FrameWrapper::new(self.ctx.display.draw());
                 self.game.draw(&mut self.ctx, &mut frame);
