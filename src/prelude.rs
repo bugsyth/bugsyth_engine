@@ -1,4 +1,5 @@
 pub use crate::{
+    asset::{self, Model},
     context::Context,
     error::*,
     game_state::GameState,
@@ -12,7 +13,6 @@ pub use crate::{
     },
     init,
     math::*,
-    obj,
     renderer::{drawable::Drawable, skybox::Skybox, texture::Texture, Renderer},
     rng, run,
 };

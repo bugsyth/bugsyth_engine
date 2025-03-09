@@ -11,7 +11,10 @@ readme = "README.md"
 # Graphics
 glium = "0.36.0"
 image = "0.25.5"
+
+# File Loading
 obj = "0.10.2"
+gltf = "1.4.1"
 
 # Audio
 cpal = "0.15.3"

@@ -1,6 +1,9 @@
 // Something with the ordering in the example doesnt work
 // Fix it sometime?
 
+// I think it is fixed
+// Images are seen as if the texture was on the outside so thing like text are backwards
+
 use crate::{
     context::Context,
     error::EngineResult,
@@ -208,7 +211,11 @@ impl Skybox {
             .magnify_filter(MagnifySamplerFilter::Linear)
     }
 
-    pub fn prepare_draw(&self, ctx: &mut Context) -> EngineResult {
+    pub fn prepare_draw(
+        &self,
+        ctx: &mut Context,
+        magnify_filter: MagnifySamplerFilter,
+    ) -> EngineResult {
         let blit_target = BlitTarget {
             left: 0,
             bottom: 0,
@@ -256,32 +263,32 @@ impl Skybox {
         self.right.get_texture().as_surface().blit_whole_color_to(
             &framebuffer1,
             &blit_target,
-            MagnifySamplerFilter::Linear,
+            magnify_filter,
         );
         self.left.get_texture().as_surface().blit_whole_color_to(
             &framebuffer2,
             &blit_target,
-            glium::uniforms::MagnifySamplerFilter::Linear,
+            magnify_filter,
         );
         self.bottom.get_texture().as_surface().blit_whole_color_to(
             &framebuffer3,
             &blit_target,
-            glium::uniforms::MagnifySamplerFilter::Linear,
+            magnify_filter,
         );
         self.top.get_texture().as_surface().blit_whole_color_to(
             &framebuffer4,
             &blit_target,
-            glium::uniforms::MagnifySamplerFilter::Linear,
+            magnify_filter,
         );
         self.front.get_texture().as_surface().blit_whole_color_to(
             &framebuffer5,
             &blit_target,
-            glium::uniforms::MagnifySamplerFilter::Linear,
+            magnify_filter,
         );
         self.back.get_texture().as_surface().blit_whole_color_to(
             &framebuffer6,
             &blit_target,
-            glium::uniforms::MagnifySamplerFilter::Linear,
+            magnify_filter,
         );
         Ok(())
     }

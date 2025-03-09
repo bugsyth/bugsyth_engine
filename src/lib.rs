@@ -1,5 +1,6 @@
 /*
     game_wrapper will hold all the code that runs the game
+    re-exports: vek, gltf, glium, fastrand
 */
 
 use context::Context;
@@ -13,11 +14,10 @@ pub mod game_state;
 pub mod math;
 pub mod prelude;
 pub mod renderer;
-
 pub mod glium {
     pub use glium::*;
 }
-pub mod obj;
+pub mod asset;
 pub mod rng;
 
 pub fn init(

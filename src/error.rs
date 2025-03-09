@@ -22,6 +22,7 @@ pub enum EngineError {
     GliumError(String),
     ImageError(String),
     ObjError(String),
+    GltfError(String),
     AudioError(String),
     IoError(String),
 }
@@ -33,6 +34,7 @@ impl std::fmt::Display for EngineError {
             Self::GliumError(msg) => write!(f, "{}", msg),
             Self::ImageError(msg) => write!(f, "{}", msg),
             Self::ObjError(msg) => write!(f, "{}", msg),
+            Self::GltfError(msg) => write!(f, "{}", msg),
             Self::AudioError(msg) => write!(f, "{}", msg),
             Self::IoError(msg) => write!(f, "{}", msg),
             _ => write!(f, "Unknown Error"),
@@ -98,6 +100,13 @@ impl From<ImageError> for EngineError {
 impl From<ObjError> for EngineError {
     fn from(value: ObjError) -> Self {
         Self::ObjError(value.to_string())
+    }
+}
+
+// Gltf
+impl From<gltf::Error> for EngineError {
+    fn from(value: gltf::Error) -> Self {
+        Self::GltfError(value.to_string())
     }
 }
 

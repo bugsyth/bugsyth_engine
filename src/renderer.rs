@@ -8,6 +8,7 @@ pub mod skybox;
 pub mod texture;
 
 pub trait Renderer {
+    /// Some things will need their rendering prepared before drawing such as skyboxes
     fn draw<D, U>(&mut self, ctx: &mut Context, drawable: &D, uniforms: &U) -> EngineResult
     where
         D: Drawable,

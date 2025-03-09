@@ -1,0 +1,2 @@
+using this to test skeletal animation
+first time making and rigging a model so it's bad

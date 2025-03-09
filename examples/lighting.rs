@@ -52,7 +52,7 @@ fn main() -> EngineResult {
     .unwrap();
     let game = Game {
         obj: Obj {
-            vbo: obj::load_wavefront(
+            model: asset::load_wavefront(
                 &ctx.display,
                 &std::fs::read("resources/suzanne.obj").unwrap(),
             )?,
@@ -97,14 +97,14 @@ impl GameState for Game {
 }
 
 struct Obj<'a> {
-    vbo: VertexBufferAny,
+    model: Model,
     ibo: NoIndices,
     draw_params: DrawParameters<'a>,
 }
 
 impl<'a> Drawable for Obj<'a> {
     fn get_vbo(&self) -> impl MultiVerticesSource {
-        &self.vbo
+        self.model.get_vbo()
     }
     fn get_ibo(&self) -> impl Into<IndicesSource> {
         &self.ibo

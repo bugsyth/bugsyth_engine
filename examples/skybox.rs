@@ -37,7 +37,10 @@ fn main() -> EngineResult {
     Skybox::send_program(&mut ctx)?;
     let game = Game {
         obj: Obj {
-            vbo: obj::load_wavefront(&ctx.display, &std::fs::read("resources/land.obj").unwrap())?,
+            model: asset::load_wavefront(
+                &ctx.display,
+                &std::fs::read("resources/land.obj").unwrap(),
+            )?,
             ibo: NoIndices(PrimitiveType::TrianglesList),
             draw_params: DrawParameters {
                 depth: Depth {
@@ -51,7 +54,7 @@ fn main() -> EngineResult {
         },
         skybox: Skybox::new(
             &ctx,
-            80,
+            128,
             "resources/skybox/right.png",
             "resources/skybox/left.png",
             "resources/skybox/top.png",
@@ -75,7 +78,9 @@ impl GameState for Game {
     }
     fn draw(&mut self, ctx: &mut Context, renderer: &mut impl Renderer) {
         renderer.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
-        self.skybox.prepare_draw(ctx).unwrap();
+        self.skybox
+            .prepare_draw(ctx, glium::uniforms::MagnifySamplerFilter::Nearest)
+            .unwrap();
         renderer
             .draw(
                 ctx,
@@ -101,14 +106,14 @@ impl GameState for Game {
 }
 
 struct Obj<'a> {
-    vbo: VertexBufferAny,
+    model: Model,
     ibo: NoIndices,
     draw_params: DrawParameters<'a>,
 }
 
 impl<'a> Drawable for Obj<'a> {
     fn get_vbo(&self) -> impl MultiVerticesSource {
-        &self.vbo
+        self.model.get_vbo()
     }
     fn get_ibo(&self) -> impl Into<IndicesSource> {
         &self.ibo

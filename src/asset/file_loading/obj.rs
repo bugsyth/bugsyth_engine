@@ -1,11 +1,13 @@
-use glium::{glutin::surface::WindowSurface, implement_vertex, Display};
+use crate::{asset::Model, error::EngineResult};
+use glium::{glutin::surface::WindowSurface, implement_vertex, Display, VertexBuffer};
 
-use crate::error::EngineResult;
-
-pub fn load_wavefront(
-    display: &Display<WindowSurface>,
-    data: &[u8],
-) -> EngineResult<glium::vertex::VertexBufferAny> {
+/// Vertex structure:
+/// struct Vertex {
+///     position: [f32; 3],
+///     normal: [f32; 3],
+///     tex_coords: [f32; 2],
+/// }
+pub fn load_wavefront(display: &Display<WindowSurface>, data: &[u8]) -> EngineResult<Model> {
     #[derive(Copy, Clone)]
     struct Vertex {
         position: [f32; 3],
@@ -43,5 +45,5 @@ pub fn load_wavefront(
         }
     }
 
-    Ok(glium::vertex::VertexBuffer::new(display, &vertex_data)?.into())
+    Ok(Model::new(VertexBuffer::new(display, &vertex_data)?.into()))
 }
