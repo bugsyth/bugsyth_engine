@@ -8,6 +8,7 @@ use glium::{glutin::surface::WindowSurface, implement_vertex, Display, VertexBuf
 ///     tex_coords: [f32; 2],
 /// }
 pub fn load_wavefront(display: &Display<WindowSurface>, data: &[u8]) -> EngineResult<Model> {
+    #[repr(C)]
     #[derive(Copy, Clone)]
     struct Vertex {
         position: [f32; 3],

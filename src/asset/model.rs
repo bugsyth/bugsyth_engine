@@ -1,5 +1,6 @@
 use glium::vertex::VertexBufferAny;
 
+#[derive(Debug)]
 pub struct Model {
     vbo: VertexBufferAny,
 }
