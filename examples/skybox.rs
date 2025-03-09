@@ -55,12 +55,14 @@ fn main() -> EngineResult {
         skybox: Skybox::new(
             &ctx,
             128,
-            "resources/skybox/right.png",
-            "resources/skybox/left.png",
-            "resources/skybox/top.png",
-            "resources/skybox/bottom.png",
-            "resources/skybox/front.png",
-            "resources/skybox/back.png",
+            [
+                "resources/skybox/right.png",
+                "resources/skybox/left.png",
+                "resources/skybox/top.png",
+                "resources/skybox/bottom.png",
+                "resources/skybox/front.png",
+                "resources/skybox/back.png",
+            ],
         )?,
     };
     run(game, event_loop, ctx)?;

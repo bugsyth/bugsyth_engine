@@ -1,7 +1,7 @@
 use crate::{asset::Model, error::EngineResult};
 use glium::{glutin::surface::WindowSurface, Display};
 
-mod vertex;
+mod mesh;
 
 /// Vertex structure:
 /// struct Vertex {
@@ -21,7 +21,7 @@ pub fn load_gltf(
             continue;
         }
         // Only using the first primitive, no support for multiple yet
-        let mut vertex_data = vertex::get_vertex_data(display, &node, &buffers)?;
+        let mut vertex_data = mesh::get_vertex_data(display, &node, &buffers)?;
         let vbo = vertex_data.remove(0);
         models.push(Model::new(vbo));
     }

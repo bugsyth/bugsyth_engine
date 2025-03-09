@@ -5,6 +5,7 @@ use glium::winit::{
 use std::collections::HashMap;
 use vek::Vec2;
 
+#[derive(Debug, Default)]
 pub struct Input {
     keys: HashMap<KeyCode, ElementState>,
     mouse_buttons: HashMap<MouseButton, ElementState>,
@@ -13,15 +14,6 @@ pub struct Input {
 }
 
 impl Input {
-    pub fn new() -> Self {
-        Self {
-            keys: HashMap::new(),
-            mouse_buttons: HashMap::new(),
-            last_mouse_position: Vec2::zero(),
-            delta_mouse: Vec2::zero(),
-        }
-    }
-
     pub fn is_key_pressed(&self, key_code: KeyCode) -> bool {
         if let Some(state) = self.keys.get(&key_code) {
             state.is_pressed()

@@ -44,26 +44,28 @@ pub struct Skybox {
 
 impl Skybox {
     /// resolution is the size of your textures
+    /// paths: [right, left, top, bottom, front, back]
     pub fn new(
         ctx: &Context,
         resolution: u32,
-        right: impl AsRef<Path>,
-        left: impl AsRef<Path>,
-        top: impl AsRef<Path>,
-        bottom: impl AsRef<Path>,
-        front: impl AsRef<Path>,
-        back: impl AsRef<Path>,
+        paths: [impl AsRef<Path> + Clone; 6],
+        // right: impl AsRef<Path>,
+        // left: impl AsRef<Path>,
+        // top: impl AsRef<Path>,
+        // bottom: impl AsRef<Path>,
+        // front: impl AsRef<Path>,
+        // back: impl AsRef<Path>,
     ) -> EngineResult<Self> {
         let scale = 25.0;
         Ok(Self {
             cubemap: texture::Cubemap::empty(&ctx.display, resolution)?,
             resolution,
-            right: Texture::new(ctx, right)?,
-            left: Texture::new(ctx, left)?,
-            top: Texture::new(ctx, top)?,
-            bottom: Texture::new(ctx, bottom)?,
-            front: Texture::new(ctx, front)?,
-            back: Texture::new(ctx, back)?,
+            right: Texture::new(ctx, paths[0].clone())?,
+            left: Texture::new(ctx, paths[1].clone())?,
+            top: Texture::new(ctx, paths[2].clone())?,
+            bottom: Texture::new(ctx, paths[3].clone())?,
+            front: Texture::new(ctx, paths[4].clone())?,
+            back: Texture::new(ctx, paths[5].clone())?,
             vbo: VertexBuffer::new(
                 &ctx.display,
                 &[

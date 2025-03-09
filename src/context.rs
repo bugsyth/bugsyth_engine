@@ -27,7 +27,7 @@ impl Context {
         Ok(Self {
             window,
             display,
-            input: Input::new(),
+            input: Input::default(),
             audio: Audio::new()?,
             camera: CameraState::new(
                 Vec3::new(0.0, 0.0, 0.0),

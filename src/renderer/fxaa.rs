@@ -205,7 +205,7 @@ impl<'a> FXAARenderer<'a> {
     }
 }
 
-impl<'a> Renderer for FXAARenderer<'a> {
+impl Renderer for FXAARenderer<'_> {
     fn get_surface(&self) -> &impl Surface {
         &self.framebuffer
     }
@@ -220,10 +220,12 @@ impl<'a> Renderer for FXAARenderer<'a> {
         self.framebuffer.draw(
             drawable.get_vbo(),
             drawable.get_ibo(),
-            ctx.get_program(drawable.get_program()).expect(&format!(
-                "Add program {} to the context",
-                drawable.get_program()
-            )),
+            ctx.get_program(drawable.get_program()).unwrap_or_else(|| {
+                panic!(
+                    "Program {} not found in the context",
+                    drawable.get_program()
+                )
+            }),
             uniforms,
             &drawable.get_draw_params(),
         )?;

@@ -4,7 +4,7 @@ use cpal::{
     Device, FromSample, Host, OutputCallbackInfo, Sample, SupportedStreamConfig,
 };
 use sound::Sound;
-use std::{collections::HashMap, sync::Arc, thread, time::Duration};
+use std::{collections::HashMap, rc::Rc, sync::Arc, thread, time::Duration};
 
 pub mod sound;
 
@@ -55,7 +55,7 @@ impl Audio {
 
             let err_fn = |err| eprintln!("An error occured on stream: {}", err);
 
-            let stream = Arc::new(
+            let stream = Rc::new(
                 device
                     .build_output_stream(
                         &SupportedStreamConfig::into(config.clone()),
@@ -75,11 +75,11 @@ impl Audio {
     }
 
     pub fn get_output_device_names(&self) -> Vec<String> {
-        self.output_devices.keys().map(|key| key.clone()).collect()
+        self.output_devices.keys().cloned().collect()
     }
 
     pub fn set_output_device(&mut self, name: String) -> EngineResult {
-        if let Some(_) = self.output_devices.get(&name) {
+        if self.output_devices.contains_key(&name) {
             self.active_output_device = name;
         } else {
             return Err(EngineError::AudioError(format!(

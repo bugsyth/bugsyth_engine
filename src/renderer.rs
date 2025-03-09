@@ -51,10 +51,8 @@ impl Renderer for FrameWrapper {
         self.frame.draw(
             drawable.get_vbo(),
             drawable.get_ibo(),
-            ctx.get_program(drawable.get_program()).expect(&format!(
-                "Unable to find program: {}",
-                drawable.get_program()
-            )),
+            ctx.get_program(drawable.get_program())
+                .unwrap_or_else(|| panic!("Unable to find program: {}", drawable.get_program())),
             uniforms,
             &drawable.get_draw_params(),
         )?;

@@ -13,7 +13,7 @@ use vek::{Mat4, Quaternion, Vec3, Vec4};
 pub fn get_vertex_data(
     display: &Display<WindowSurface>,
     node: &Node<'_>,
-    buffers: &Vec<Data>,
+    buffers: &[Data],
 ) -> EngineResult<Vec<VertexBufferAny>> {
     let mesh = if let Some(mesh) = node.mesh() {
         mesh
