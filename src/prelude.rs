@@ -1,5 +1,5 @@
 pub use crate::{
-    asset::{self, Model},
+    asset::{self, model::Model, Asset, MeshType},
     context::Context,
     error::*,
     game_state::GameState,

@@ -1,4 +1,7 @@
-use crate::error::{EngineError, EngineResult};
+use crate::{
+    asset::MeshType,
+    error::{EngineError, EngineResult},
+};
 use glium::{
     glutin::surface::WindowSurface, implement_vertex, vertex::VertexBufferAny, Display,
     VertexBuffer,
@@ -10,17 +13,47 @@ use gltf::{
 };
 use vek::{Mat4, Quaternion, Vec3, Vec4};
 
+#[repr(C)]
+#[derive(Copy, Clone)]
+struct StandardVertex {
+    position: [f32; 3],
+    normal: [f32; 3],
+    tex_coords: [f32; 2],
+    color: [f32; 4],
+}
+
+implement_vertex!(StandardVertex, position, normal, tex_coords, color);
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+struct SkeletalVertex {
+    position: [f32; 3],
+    normal: [f32; 3],
+    tex_coords: [f32; 2],
+    color: [f32; 4],
+    joint_set: [i32; 4],
+    weights: [f32; 4],
+}
+
+implement_vertex!(
+    SkeletalVertex,
+    position,
+    normal,
+    tex_coords,
+    color,
+    joint_set,
+    weights,
+);
+
 pub fn get_vertex_data(
     display: &Display<WindowSurface>,
     node: &Node<'_>,
     buffers: &[Data],
-) -> EngineResult<Vec<VertexBufferAny>> {
+) -> EngineResult<Vec<(MeshType, VertexBufferAny)>> {
     let mesh = if let Some(mesh) = node.mesh() {
         mesh
     } else {
-        return Err(EngineError::GltfError(
-            "Node does not have a mesh".to_string(),
-        ));
+        return Ok(Vec::new());
     };
 
     let (t, r, s) = node.transform().decomposed();
@@ -36,12 +69,14 @@ pub fn get_vertex_data(
         let mut normals = Vec::new();
         let mut tex_coords = Vec::new();
         let mut colors = Vec::new();
+        let mut vertex_joint_indices = Vec::new();
+        let mut vertex_weights = Vec::new();
         let reader = primitive.reader(|buffer| Some(&buffers[buffer.index()]));
         for (semantic, _) in primitive.attributes() {
             match semantic {
                 Semantic::Positions => {
                     for vertex in reader.read_positions().unwrap() {
-                        let pos = transform * Vec4::new(vertex[0], vertex[1], vertex[2], 1.0);
+                        let pos = Vec4::new(vertex[0], vertex[1], vertex[2], 1.0); // Multiply by transform here to use world space vertex positions
                         vertices.push([pos.x, pos.y, pos.z]);
                     }
                 }
@@ -146,6 +181,25 @@ pub fn get_vertex_data(
                         }
                     }
                 }
+                Semantic::Joints(set) => {
+                    if let Some(joints) = reader.read_joints(set) {
+                        for joint_set in joints.into_u16() {
+                            vertex_joint_indices.push([
+                                joint_set[0] as i32,
+                                joint_set[1] as i32,
+                                joint_set[2] as i32,
+                                joint_set[3] as i32,
+                            ]);
+                        }
+                    }
+                }
+                Semantic::Weights(set) => {
+                    if let Some(weights) = reader.read_weights(set) {
+                        for weight_set in weights.into_f32() {
+                            vertex_weights.push(weight_set);
+                        }
+                    }
+                }
                 _ => {}
             }
         }
@@ -154,18 +208,11 @@ pub fn get_vertex_data(
             println!("Mismatched attribute counts - vertex = {}, normals = {}, tex coords = {}, vertex colors = {}", vertices.len(), normals.len(), tex_coords.len(), colors.len());
         }
 
-        #[repr(C)]
-        #[derive(Copy, Clone)]
-        struct Vertex {
-            position: [f32; 3],
-            normal: [f32; 3],
-            tex_coords: [f32; 2],
-            color: [f32; 4],
-        }
-
-        implement_vertex!(Vertex, position, normal, tex_coords, color);
-
-        let mut vertex_data = Vec::new();
+        let mut vertex_data = if vertex_joint_indices.is_empty() {
+            VertexBufferType::Standard(Vec::new())
+        } else {
+            VertexBufferType::Skeletal(Vec::new())
+        };
         if let Some(indices) = reader.read_indices() {
             for index in indices.into_u32() {
                 let index = index as usize;
@@ -173,16 +220,43 @@ pub fn get_vertex_data(
                 let normal = normals.get(index).copied().unwrap_or([0.0, 0.0, 1.0]);
                 let tex_coords = tex_coords.get(index).copied().unwrap_or([0.0, 0.0]);
                 let color = colors.get(index).copied().unwrap_or([1.0, 1.0, 1.0, 1.0]);
-
-                vertex_data.push(Vertex {
-                    position,
-                    normal,
-                    tex_coords,
-                    color,
-                });
+                match &mut vertex_data {
+                    VertexBufferType::Standard(vec) => {
+                        vec.push(StandardVertex {
+                            position,
+                            normal,
+                            tex_coords,
+                            color,
+                        });
+                    }
+                    VertexBufferType::Skeletal(vec) => {
+                        let joint_set = vertex_joint_indices[index];
+                        let weights = vertex_weights[index];
+                        vec.push(SkeletalVertex {
+                            position,
+                            normal,
+                            tex_coords,
+                            color,
+                            joint_set,
+                            weights,
+                        });
+                    }
+                }
             }
         }
-        primitives.push(VertexBuffer::new(display, &vertex_data)?.into());
+        match vertex_data {
+            VertexBufferType::Standard(vec) => {
+                primitives.push((MeshType::Standard, VertexBuffer::new(display, &vec)?.into()))
+            }
+            VertexBufferType::Skeletal(vec) => {
+                primitives.push((MeshType::Skeletal, VertexBuffer::new(display, &vec)?.into()))
+            }
+        }
     }
     Ok(primitives)
+}
+
+enum VertexBufferType {
+    Standard(Vec<StandardVertex>),
+    Skeletal(Vec<SkeletalVertex>),
 }
