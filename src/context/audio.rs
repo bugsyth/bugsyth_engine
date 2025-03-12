@@ -90,11 +90,11 @@ impl Audio {
         Ok(())
     }
     pub fn set_output_device_as_default_device(&mut self) -> EngineResult {
-        if let Some(device) = self.host.default_output_device() {
+        match self.host.default_output_device() { Some(device) => {
             self.active_output_device = device.name()?;
-        } else {
+        } _ => {
             return Err(EngineError::AudioError("No default device".to_string()));
-        }
+        }}
         Ok(())
     }
 }
