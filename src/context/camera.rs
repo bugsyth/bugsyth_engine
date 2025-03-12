@@ -5,14 +5,14 @@ use vek::{Mat4, Vec3};
 
 pub struct CameraState {
     pub position: Vec3<f32>,
-    pub target: Vec3<f32>,
-    yaw: f32,
-    pitch: f32,
-    up: Vec3<f32>,
-    fov: f32,
-    aspect_ratio: f32,
-    near: f32,
-    far: f32,
+    target: Vec3<f32>,
+    pub yaw: f32,
+    pub pitch: f32,
+    pub up: Vec3<f32>,
+    pub fov: f32,
+    pub aspect_ratio: f32,
+    pub near: f32,
+    pub far: f32,
 }
 
 impl CameraState {
@@ -36,6 +36,11 @@ impl CameraState {
             near,
             far,
         }
+    }
+
+    pub fn look_at(&mut self, target: Vec3<f32>) {
+        let d = target - self.position;
+        self.yaw = d.z.atan2(d.x);
     }
 
     pub fn get_perspective(&self) -> [[f32; 4]; 4] {

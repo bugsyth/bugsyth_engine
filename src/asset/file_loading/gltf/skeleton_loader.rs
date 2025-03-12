@@ -5,6 +5,10 @@ use gltf::{buffer::Data, Node, Skin};
 use vek::Mat4;
 
 pub fn build_skeleton(skin: Skin<'_>, buffers: &[Data]) -> Skeleton {
+    for x in skin.joints() {
+        println!("{}", x.index());
+    }
+
     let mut buffer = Vec::new();
     build_indices(
         &mut buffer,
@@ -43,7 +47,12 @@ pub fn build_skeleton(skin: Skin<'_>, buffers: &[Data]) -> Skeleton {
     // calculate_bone_transforms(&mut bone_matrices, root, &joints);
 
     Skeleton {
+        joint_index_map: skin.joints().map(|joint| joint.index()).collect(),
         joints,
+        origin_bone_matrices: bone_matrices
+            .iter()
+            .map(|matrix| Mat4::from_col_arrays(*matrix))
+            .collect(),
         bone_matrices,
         inverse_bind_matrices,
     }

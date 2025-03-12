@@ -2,7 +2,9 @@ use bugsyth_engine::{asset::Asset, prelude::*};
 use glium::buffer::{Buffer, BufferMode, BufferType};
 
 fn main() -> EngineResult {
-    let (event_loop, mut ctx) = init("gltf", (960, 720))?;
+    let (event_loop, mut ctx) = init("animation", (960, 720))?;
+    ctx.camera.position = Vec3::new(0.0, 0.0, 5.0);
+    ctx.camera.look_at(Vec3::zero());
     // Normals not set right
     ctx.new_program(
         "skeleton",
@@ -80,7 +82,7 @@ void main() {
         None,
     )
     .unwrap();
-    let assets = asset::load_gltf(&ctx.display, "resources/suzanne.glb")?;
+    let assets = asset::load_gltf(&ctx.display, "resources/lil_man/lil_man.glb")?;
     let mut objs = Vec::new();
     for asset in assets {
         objs.push(Obj {
@@ -100,6 +102,7 @@ void main() {
     let game = Game {
         objs,
         tex: Texture::new(&ctx, "resources/lil_man/lil_man.png")?,
+        t: 0.0,
     };
     run(game, event_loop, ctx)?;
     Ok(())
@@ -108,11 +111,25 @@ void main() {
 struct Game {
     objs: Vec<Obj<'static>>,
     tex: Texture,
+    t: f32,
 }
 
 impl GameState for Game {
     fn update(&mut self, ctx: &mut Context) {
-        bugsyth_engine::context::camera::CameraState::free_cam(ctx.dt, ctx, 1.0, 1.0);
+        // if let Some(skeleton) = &mut self.objs[0].asset.skeleton {
+        //     skeleton.bone_matrices[4][3][0] += 0.0001;
+        // }
+        self.t += ctx.dt;
+        let asset = &mut self.objs[0].asset;
+        if let Some(skeleton) = &mut asset.skeleton {
+            let matrices = asset
+                .animations
+                .as_ref()
+                .unwrap()
+                .get_animatied_transforms(&skeleton, self.t);
+            skeleton.update_bone_matrices(&matrices);
+        }
+        bugsyth_engine::context::camera::CameraState::free_cam(ctx.dt, ctx, 4.0, 1.0);
     }
     fn draw(&mut self, ctx: &mut Context, renderer: &mut impl Renderer) {
         renderer.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
