@@ -69,7 +69,7 @@ impl Input {
         if (self.mouse_position() - window_center).magnitude()
             > window_size.width.min(window_size.height) as f32 / 4.0
         {
-            self.set_mouse_position(&window, window_center).unwrap();
+            self.set_mouse_position(window, window_center).unwrap();
         }
     }
 
