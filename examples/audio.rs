@@ -1,4 +1,4 @@
-use bugsyth_engine::{context::audio::sound::Sound, prelude::*};
+use bugsyth_engine::prelude::*;
 
 fn main() -> EngineResult {
     let (event_loop, mut ctx) = init("Audio", (960, 720))?;

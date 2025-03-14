@@ -4,13 +4,13 @@ use cpal::{
     BuildStreamError, DefaultStreamConfigError, DeviceNameError, DevicesError, PlayStreamError,
 };
 use glium::{
+    DrawError, ProgramCreationError,
     framebuffer::{RenderBufferCreationError, ValidationError},
     index,
     program::ProgramChooserCreationError,
     texture::TextureCreationError,
     vertex,
-    winit::error::EventLoopError,
-    DrawError, ProgramCreationError,
+    winit::error::{EventLoopError, ExternalError},
 };
 use image::ImageError;
 use obj::ObjError;
@@ -45,6 +45,11 @@ impl std::fmt::Display for EngineError {
 // Glium
 impl From<EventLoopError> for EngineError {
     fn from(value: EventLoopError) -> Self {
+        Self::GliumError(value.to_string())
+    }
+}
+impl From<ExternalError> for EngineError {
+    fn from(value: ExternalError) -> Self {
         Self::GliumError(value.to_string())
     }
 }

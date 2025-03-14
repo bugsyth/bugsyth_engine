@@ -1,17 +1,19 @@
 use crate::{context::Context, error::EngineResult};
 use glium::{
+    Texture2d,
     texture::RawImage2d,
     uniforms::{MagnifySamplerFilter, MinifySamplerFilter, Sampler},
-    Texture2d,
 };
 use image::ImageReader;
 use std::path::Path;
 
+/// Holds texture data
 pub struct Texture {
     texture: Texture2d,
 }
 
 impl Texture {
+    /// Creates a texture from the path to an image
     pub fn new(ctx: &Context, path: impl AsRef<Path>) -> EngineResult<Self> {
         let img = ImageReader::open(path)?.decode()?.to_rgba8();
         let img_dimensions = img.dimensions();
@@ -20,6 +22,7 @@ impl Texture {
             texture: Texture2d::new(&ctx.display, img)?,
         })
     }
+
     pub fn get_texture(&self) -> &Texture2d {
         &self.texture
     }
@@ -29,6 +32,7 @@ impl Texture {
             .magnify_filter(MagnifySamplerFilter::Nearest)
             .minify_filter(MinifySamplerFilter::Nearest)
     }
+
     pub fn get_texture_mut(&mut self) -> &mut Texture2d {
         &mut self.texture
     }

@@ -1,7 +1,7 @@
 use crate::error::EngineResult;
 use audio::Audio;
 use camera::CameraState;
-use glium::{glutin::surface::WindowSurface, winit::window::Window, Display, Program};
+use glium::{Display, Program, glutin::surface::WindowSurface, winit::window::Window};
 use input::Input;
 use std::{collections::HashMap, f32::consts::PI};
 use vek::Vec3;
@@ -10,6 +10,7 @@ pub mod audio;
 pub mod camera;
 mod input;
 
+/// Holds everything that the user can use for event handling, audio, and basic boilerplate
 pub struct Context {
     pub window: Window,
     pub display: Display<WindowSurface>,
@@ -47,6 +48,7 @@ impl Context {
         })
     }
 
+    /// Same as `add_program` but creates the program for you
     pub fn new_program(
         &mut self,
         name: impl Into<String>,
@@ -61,15 +63,18 @@ impl Context {
         Ok(())
     }
 
-    pub fn add_program(&mut self, name: impl Into<String>, program: Program) {
-        self.programs.insert(name.into(), program);
+    pub fn add_program(&mut self, name: impl Into<String>, program: Program) -> Option<Program> {
+        self.programs.insert(name.into(), program)
     }
-    pub fn remove_program(&mut self, name: impl Into<String>) {
-        self.programs.remove(&name.into());
+    pub fn remove_program(&mut self, name: impl Into<String>) -> Option<Program> {
+        self.programs.remove(&name.into())
     }
 
     pub fn get_program(&self, name: impl Into<String>) -> Option<&Program> {
         self.programs.get(&name.into())
+    }
+    pub fn get_program_mut(&mut self, name: impl Into<String>) -> Option<&mut Program> {
+        self.programs.get_mut(&name.into())
     }
 }
 

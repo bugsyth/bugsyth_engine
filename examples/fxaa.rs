@@ -1,6 +1,6 @@
 use bugsyth_engine::{
     prelude::*,
-    renderer::fxaa::{FXAARenderer, FXAA},
+    renderer::fxaa::{FXAA, FXAARenderer},
 };
 
 fn main() -> EngineResult {
@@ -59,10 +59,7 @@ fn main() -> EngineResult {
     let window_size = ctx.window.inner_size();
     let game = Game {
         obj: Obj {
-            model: asset::load_wavefront(
-                &ctx.display,
-                &std::fs::read("resources/suzanne.obj").unwrap(),
-            )?,
+            model: asset::load_wavefront(&ctx, &std::fs::read("resources/suzanne.obj").unwrap())?,
             ibo: NoIndices(PrimitiveType::TrianglesList),
             draw_params: DrawParameters {
                 depth: Depth {

@@ -1,6 +1,6 @@
 pub use crate::{
-    asset::{self, Asset, MeshType, model::Model},
-    context::Context,
+    asset::{self, model::Model},
+    context::{Context, audio::sound::Sound},
     error::*,
     game_state::GameState,
     glium::{

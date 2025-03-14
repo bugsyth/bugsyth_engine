@@ -3,6 +3,7 @@ use glium::winit::keyboard::KeyCode;
 use std::f32::consts::PI;
 use vek::{Mat4, Vec3};
 
+/// Basic camera state held inside the `Context`
 pub struct CameraState {
     pub position: Vec3<f32>,
     target: Vec3<f32>,
@@ -39,30 +40,18 @@ impl CameraState {
     }
 
     pub fn look_at(&mut self, target: Vec3<f32>) {
-        let d = target - self.position;
-        self.yaw = d.z.atan2(d.x);
+        let direction = (target - self.position).normalized();
+
+        self.pitch = direction.y.asin();
+        self.yaw = direction.x.atan2(direction.z);
     }
 
     pub fn get_perspective(&self) -> [[f32; 4]; 4] {
-        let mat = Mat4::perspective_rh_no(self.fov, self.aspect_ratio, self.near, self.far);
-        let cols = mat.cols;
-        [
-            [cols[0].x, cols[0].y, cols[0].z, cols[0].w],
-            [cols[1].x, cols[1].y, cols[1].z, cols[1].w],
-            [cols[2].x, cols[2].y, cols[2].z, cols[2].w],
-            [cols[3].x, cols[3].y, cols[3].z, cols[3].w],
-        ]
+        Mat4::perspective_rh_no(self.fov, self.aspect_ratio, self.near, self.far).into_col_arrays()
     }
 
     pub fn get_view(&self) -> [[f32; 4]; 4] {
-        let mat = Mat4::look_at_rh(self.position, self.target, self.up);
-        let cols = mat.cols;
-        [
-            [cols[0].x, cols[0].y, cols[0].z, cols[0].w],
-            [cols[1].x, cols[1].y, cols[1].z, cols[1].w],
-            [cols[2].x, cols[2].y, cols[2].z, cols[2].w],
-            [cols[3].x, cols[3].y, cols[3].z, cols[3].w],
-        ]
+        Mat4::look_at_rh(self.position, self.target, self.up).into_col_arrays()
     }
 
     /// Run at the end of any game update loop
@@ -81,6 +70,8 @@ impl CameraState {
         (f, r, u)
     }
 
+    /// WASD movement, left shift down, space up, mouse for turning and free the mouse by holding E.
+    /// Not built for preformance, here for debugging
     pub fn free_cam(dt: f32, ctx: &mut Context, cam_speed: f32, cam_rot_speed: f32) {
         let (f, s, _) = ctx.camera.get_directions();
         // Handle camera movement
@@ -121,25 +112,14 @@ impl CameraState {
             ctx.camera.yaw += cam_rot;
         }
 
-        /*
-
-            Look around with mouse
-            doesnt work well when using a gui lib
-
         // Handle mouse movement for camera rotation
-        let window_center = PhysicalPosition::new(
-            ctx.window.inner_size().width / 2,
-            ctx.window.inner_size().height / 2,
-        );
-        let mouse_position = ctx.input.mouse_position();
-        let delta_mouse = Vec2::new(
-            window_center.x as f32 - mouse_position.x,
-            window_center.y as f32 - mouse_position.y,
-        );
+        let delta_mouse = ctx.input.delta_mouse();
 
-        ctx.camera.yaw = -delta_mouse.x / 100.0 * cam_rot_speed;
-        ctx.camera.pitch =
-            (delta_mouse.y / 100.0 * cam_rot_speed).clamp(-PI / 2.0 + 0.01, PI / 2.0 - 0.01);
-        */
+        ctx.input
+            .lock_mouse_near_center(&ctx.window, !ctx.input.is_key_pressed(KeyCode::KeyE));
+
+        ctx.camera.yaw += -delta_mouse.x / 100.0 * cam_rot_speed;
+        ctx.camera.pitch += delta_mouse.y / 100.0 * cam_rot_speed;
+        ctx.camera.pitch = ctx.camera.pitch.clamp(-PI / 2.0 + 0.01, PI / 2.0 - 0.01);
     }
 }

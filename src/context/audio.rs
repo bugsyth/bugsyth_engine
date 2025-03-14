@@ -1,7 +1,7 @@
 use crate::error::{EngineError, EngineResult};
 use cpal::{
-    traits::{DeviceTrait, HostTrait, StreamTrait},
     Device, FromSample, Host, OutputCallbackInfo, Sample, SupportedStreamConfig,
+    traits::{DeviceTrait, HostTrait, StreamTrait},
 };
 use sound::Sound;
 use std::{collections::HashMap, rc::Rc, sync::Arc, thread, time::Duration};
@@ -90,11 +90,14 @@ impl Audio {
         Ok(())
     }
     pub fn set_output_device_as_default_device(&mut self) -> EngineResult {
-        match self.host.default_output_device() { Some(device) => {
-            self.active_output_device = device.name()?;
-        } _ => {
-            return Err(EngineError::AudioError("No default device".to_string()));
-        }}
+        match self.host.default_output_device() {
+            Some(device) => {
+                self.active_output_device = device.name()?;
+            }
+            _ => {
+                return Err(EngineError::AudioError("No default device".to_string()));
+            }
+        }
         Ok(())
     }
 }

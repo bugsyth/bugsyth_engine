@@ -33,10 +33,7 @@ fn main() -> EngineResult {
     .unwrap();
     let game = Game {
         obj: Obj {
-            model: asset::load_wavefront(
-                &ctx.display,
-                &std::fs::read("resources/land.obj").unwrap(),
-            )?,
+            model: asset::load_wavefront(&ctx, &std::fs::read("resources/land.obj").unwrap())?,
             ibo: NoIndices(PrimitiveType::TrianglesList),
             draw_params: DrawParameters {
                 depth: Depth {

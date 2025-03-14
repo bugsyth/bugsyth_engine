@@ -1,5 +1,6 @@
-use glium::{index::IndicesSource, vertex::MultiVerticesSource, DrawParameters};
+use glium::{DrawParameters, index::IndicesSource, vertex::MultiVerticesSource};
 
+/// Trait for anything that can be passed through the `draw` function
 pub trait Drawable {
     fn get_vbo(&self) -> impl MultiVerticesSource;
     fn get_ibo(&self) -> impl Into<IndicesSource>;
