@@ -1,16 +1,19 @@
 [package]
 name = "bugsyth_engine"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2024"
 repository = "https://github.com/bugsyth/bugsyth_engine"
 license = "MIT OR Apache-2.0"
-description = "little engine using glium"
+description = "little framework using glium"
 readme = "README.md"
 
 [dependencies]
 # Graphics
 glium = "0.36.0"
 image = "0.25.5"
+
+# Font 
+fontdue = "0.9.3"
 
 # File Loading
 obj = "0.10.2"

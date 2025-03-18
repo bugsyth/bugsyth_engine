@@ -1,6 +1,7 @@
 use crate::{context::Context, error::EngineResult};
 use glium::{
-    Texture2d,
+    Display, Texture2d,
+    glutin::surface::WindowSurface,
     texture::RawImage2d,
     uniforms::{MagnifySamplerFilter, MinifySamplerFilter, Sampler},
 };
@@ -20,6 +21,27 @@ impl Texture {
         let img = RawImage2d::from_raw_rgba_reversed(&img.into_raw(), img_dimensions);
         Ok(Self {
             texture: Texture2d::new(&ctx.display, img)?,
+        })
+    }
+
+    pub fn from_rgb_bytes(
+        display: &Display<WindowSurface>,
+        bytes: &[u8],
+        dimensions: (u32, u32),
+    ) -> EngineResult<Self> {
+        let img = RawImage2d::from_raw_rgb_reversed(bytes, dimensions);
+        Ok(Self {
+            texture: Texture2d::new(display, img)?,
+        })
+    }
+    pub fn from_rgba_bytes(
+        display: &Display<WindowSurface>,
+        bytes: &[u8],
+        dimensions: (u32, u32),
+    ) -> EngineResult<Self> {
+        let img = RawImage2d::from_raw_rgba_reversed(bytes, dimensions);
+        Ok(Self {
+            texture: Texture2d::new(display, img)?,
         })
     }
 

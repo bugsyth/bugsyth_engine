@@ -5,6 +5,7 @@ use glium::{Frame, Surface, uniforms::Uniforms};
 pub mod drawable;
 pub mod fxaa;
 pub mod skybox;
+pub mod text;
 pub mod texture;
 
 /// Trait that abracts from gliums `Surface` trait, if you want lower level access use `get_surface_mut`

@@ -1,5 +1,5 @@
 use crate::error::EngineResult;
-use std::{fs::File, sync::Arc};
+use std::{fs::File, path::Path, sync::Arc};
 use wav_io::header::WavHeader;
 
 #[derive(Debug, Clone)]
@@ -9,8 +9,8 @@ pub struct Sound {
 }
 
 impl Sound {
-    pub fn new(path: impl Into<String>) -> EngineResult<Self> {
-        let (header, samples) = wav_io::read_from_file(File::open(path.into())?)?;
+    pub fn new(path: impl AsRef<Path>) -> EngineResult<Self> {
+        let (header, samples) = wav_io::read_from_file(File::open(path)?)?;
         Ok(Self {
             header,
             samples: Arc::new(samples),

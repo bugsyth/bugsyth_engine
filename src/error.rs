@@ -19,6 +19,7 @@ use wav_io::reader::DecodeError;
 pub type EngineResult<T = ()> = Result<T, EngineError>;
 #[derive(Debug)]
 pub enum EngineError {
+    Error(String),
     GliumError(String),
     ImageError(String),
     ObjError(String),
@@ -31,6 +32,7 @@ impl std::fmt::Display for EngineError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         #[allow(unreachable_patterns)]
         match self {
+            Self::Error(msg) => write!(f, "{}", msg),
             Self::GliumError(msg) => write!(f, "{}", msg),
             Self::ImageError(msg) => write!(f, "{}", msg),
             Self::ObjError(msg) => write!(f, "{}", msg),
@@ -153,5 +155,11 @@ impl From<PlayStreamError> for EngineError {
 impl From<DecodeError> for EngineError {
     fn from(value: DecodeError) -> Self {
         Self::AudioError(value.to_string())
+    }
+}
+
+impl From<&str> for EngineError {
+    fn from(value: &str) -> Self {
+        Self::Error(value.to_string())
     }
 }

@@ -1,6 +1,10 @@
-use crate::error::EngineResult;
+use crate::{
+    error::EngineResult,
+    shaders::{TEXT_FS, TEXT_VS},
+};
 use audio::Audio;
 use camera::CameraState;
+use font::Font;
 use glium::{Display, Program, glutin::surface::WindowSurface, winit::window::Window};
 use input::Input;
 use std::{collections::HashMap, f32::consts::PI};
@@ -8,6 +12,7 @@ use vek::Vec3;
 
 pub mod audio;
 pub mod camera;
+pub(crate) mod font;
 mod input;
 
 /// Holds everything that the user can use for event handling, audio, and basic boilerplate
@@ -20,11 +25,19 @@ pub struct Context {
     pub dt: f32,
     pub fixed_update: FixedUpdate,
     programs: HashMap<String, Program>,
+    fonts: HashMap<String, Font>,
 }
 
 impl Context {
     pub(crate) fn new(window: Window, display: Display<WindowSurface>) -> EngineResult<Self> {
         let window_size = window.inner_size();
+
+        let mut programs = HashMap::new();
+        programs.insert(
+            "text".to_string(),
+            Program::from_source(&display, TEXT_VS, TEXT_FS, None)?,
+        );
+
         Ok(Self {
             window,
             display,
@@ -44,7 +57,8 @@ impl Context {
                 accumulator: 0.0,
                 tick_rate: 0.0166,
             },
-            programs: HashMap::new(),
+            programs,
+            fonts: HashMap::new(),
         })
     }
 
@@ -63,6 +77,7 @@ impl Context {
         Ok(())
     }
 
+    /// Do not add a program called "text" as it is used for text
     pub fn add_program(&mut self, name: impl Into<String>, program: Program) -> Option<Program> {
         self.programs.insert(name.into(), program)
     }
@@ -76,6 +91,27 @@ impl Context {
     pub fn get_program_mut(&mut self, name: impl Into<String>) -> Option<&mut Program> {
         self.programs.get_mut(&name.into())
     }
+
+    pub fn add_font(
+        &mut self,
+        name: impl Into<String>,
+        font: &[u8],
+        font_size: f32,
+    ) -> EngineResult {
+        self.fonts
+            .insert(name.into(), Font::new(&self.display, font, font_size)?);
+        Ok(())
+    }
+    pub fn remove_font(&mut self, name: impl Into<String>) {
+        self.fonts.remove(&name.into());
+    }
+
+    pub(crate) fn get_font(&self, name: impl Into<String>) -> Option<&Font> {
+        self.fonts.get(&name.into())
+    }
+    // pub(crate) fn get_font_mut(&mut self, name: impl Into<String>) -> Option<&mut Font> {
+    //     self.fonts.get_mut(&name.into())
+    // }
 }
 
 /// Change tick_rate to what you want it to be in your game

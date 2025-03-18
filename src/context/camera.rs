@@ -113,11 +113,13 @@ impl CameraState {
         }
 
         // Handle mouse movement for camera rotation
+        let mouse_look = !ctx.input.is_key_pressed(KeyCode::KeyE);
+        ctx.input.lock_mouse_near_center(&ctx.window, mouse_look);
+
+        if !mouse_look {
+            return;
+        }
         let delta_mouse = ctx.input.delta_mouse();
-
-        ctx.input
-            .lock_mouse_near_center(&ctx.window, !ctx.input.is_key_pressed(KeyCode::KeyE));
-
         ctx.camera.yaw += -delta_mouse.x / 100.0 * cam_rot_speed;
         ctx.camera.pitch += delta_mouse.y / 100.0 * cam_rot_speed;
         ctx.camera.pitch = ctx.camera.pitch.clamp(-PI / 2.0 + 0.01, PI / 2.0 - 0.01);

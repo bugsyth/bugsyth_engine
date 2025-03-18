@@ -1,6 +1,6 @@
 //! Small framework I plan to use for my own games
 //!
-//! To get a window on the screen, call (init)[https://docs.rs/bugsyth_engine/0.4.0/bugsyth_engine/fn.init.html]
+//! To get a window on the screen, call [init](https://docs.rs/bugsyth_engine/0.4.0/bugsyth_engine/fn.init.html)
 //! If you want to draw stuff onto the screen, you need a shader,
 //! something that implements the [Drawable](https://docs.rs/bugsyth_engine/0.4.0/bugsyth_engine/renderer/drawable/trait.Drawable.html) trait,
 //! a struct that implements [GameState](https://docs.rs/bugsyth_engine/0.4.0/bugsyth_engine/game_state/trait.GameState.html) to hold your game's data,
@@ -22,6 +22,7 @@ pub mod game_state;
 pub mod math;
 pub mod prelude;
 pub mod renderer;
+pub mod shaders;
 pub mod glium {
     pub use glium::*;
 }
@@ -45,4 +46,20 @@ pub fn run(game: impl GameState, event_loop: EventLoop<()>, ctx: Context) -> Eng
     app.game.init(&mut app.ctx);
     event_loop.run_app(&mut app)?;
     Ok(())
+}
+
+/// Creates an instant to make measuring times easier
+#[macro_export]
+macro_rules! start_timer {
+    ($name:ident) => {
+        let $name = std::time::Instant::now();
+    };
+}
+
+/// Prints the elapsed time from `start_timer`
+#[macro_export]
+macro_rules! stop_timer {
+    ($name:ident) => {
+        println!("Elapsed time: {:?}", $name.elapsed());
+    };
 }

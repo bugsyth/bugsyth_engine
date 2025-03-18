@@ -7,9 +7,12 @@
 use crate::{
     context::Context,
     error::EngineResult,
-    renderer::{texture::Texture, Drawable},
+    renderer::{Drawable, texture::Texture},
+    shaders::{SKYBOX_FS, SKYBOX_VS},
 };
 use glium::{
+    BackfaceCullingMode, BlitTarget, Depth, DepthTest, DrawParameters, IndexBuffer, Surface,
+    VertexBuffer,
     framebuffer::SimpleFrameBuffer,
     implement_vertex,
     index::{IndicesSource, PrimitiveType},
@@ -17,8 +20,6 @@ use glium::{
     texture::{self, Cubemap},
     uniforms::{MagnifySamplerFilter, Sampler},
     vertex::MultiVerticesSource,
-    BackfaceCullingMode, BlitTarget, Depth, DepthTest, DrawParameters, IndexBuffer, Surface,
-    VertexBuffer,
 };
 use std::path::Path;
 
@@ -172,36 +173,8 @@ impl Skybox {
         ctx.add_program(
             "skybox",
             program!(&ctx.display, 140 => {
-                vertex: r"
-            #version 140
-
-            in vec3 position;
-
-            out vec3 v_tex_coords;
-
-            uniform mat4 persp;
-            uniform mat4 view;
-
-            void main() {
-                v_tex_coords = position;
-                mat4 view_no_translation = mat4(mat3(view));
-                gl_Position = persp * view_no_translation * vec4(position, 1.0);
-                gl_Position = gl_Position.xyzw; // Force w = 1 for depth correction
-            }
-        ",
-                fragment: r"
-            #version 140
-
-            in vec3 v_tex_coords;
-
-            uniform samplerCube u_skybox;
-
-            out vec4 color;
-
-            void main() {
-                color = texture(u_skybox, vec3(v_tex_coords.x, -v_tex_coords.y, v_tex_coords.z));
-            }
-        ",
+                vertex: SKYBOX_VS,
+                fragment: SKYBOX_FS,
             })?,
         );
         Ok(())
