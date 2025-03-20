@@ -1,6 +1,6 @@
 More a framework, not an engine
 
-Uses glium for rendering, winit for event handling, and cpal for audio
+Uses glium for rendering, fontdue for text rasterization, winit for event handling, and cpal for audio
 
 ## Example
 
