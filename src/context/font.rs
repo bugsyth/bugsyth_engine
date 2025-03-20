@@ -3,8 +3,6 @@ use glium::{Display, glutin::surface::WindowSurface};
 use image::{GrayImage, ImageBuffer, Rgb};
 use std::collections::HashMap;
 
-const ATLAS_PADDING: usize = 10;
-
 pub struct Font {
     pub atlas: Texture,
     pub glyphs: HashMap<char, GlyphData>,
@@ -29,11 +27,12 @@ impl Font {
         let mut glyphs = HashMap::new();
 
         let atlas_width = font_size * 24.0;
-        let atlas_height = font_size * 8.0;
+        let atlas_height = font_size * 6.0;
         let mut atlas = GrayImage::new(atlas_width as u32, atlas_height as u32);
 
-        let mut x_offset: usize = ATLAS_PADDING;
-        let mut y_offset: usize = ATLAS_PADDING;
+        let atlas_padding = (font_size / 8.0) as usize;
+        let mut x_offset: usize = atlas_padding;
+        let mut y_offset: usize = atlas_padding;
         let mut max_row_height = 0;
 
         for &c in &charset {
@@ -42,9 +41,9 @@ impl Font {
                 continue;
             }
 
-            if x_offset + metrics.width + ATLAS_PADDING > atlas_width as usize - ATLAS_PADDING {
-                x_offset = ATLAS_PADDING;
-                y_offset += max_row_height + ATLAS_PADDING;
+            if x_offset + metrics.width + atlas_padding > atlas_width as usize - atlas_padding {
+                x_offset = atlas_padding;
+                y_offset += max_row_height + atlas_padding;
                 max_row_height = 0;
             }
 
@@ -79,7 +78,7 @@ impl Font {
                 },
             );
 
-            x_offset += metrics.width + ATLAS_PADDING;
+            x_offset += metrics.width + atlas_padding;
             max_row_height = max_row_height.max(metrics.height);
         }
 
@@ -90,7 +89,7 @@ impl Font {
             let gray = pixel.0[0];
             rgb_img.put_pixel(x, y, Rgb([gray, gray, gray]));
         }
-        //rgb_img.save("atlas.png")?;
+        rgb_img.save("atlas.png")?;
         let atlas = Texture::from_rgb_bytes(display, &rgb_img.into_raw(), (img_width, img_height))?;
 
         Ok(Self {
