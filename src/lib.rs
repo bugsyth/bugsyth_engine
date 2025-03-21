@@ -9,6 +9,8 @@
 /*
     game_wrapper will hold all the code that runs the game
     re-exports: vek, gltf, glium, fastrand
+    TODO: Fix some of the scoping with modules inside and outside of the context
+    I feel like some of them don't make sense and could be moved around
 */
 
 use context::Context;

@@ -2,6 +2,7 @@ use crate::error::EngineResult;
 use std::{fs::File, path::Path, sync::Arc};
 use wav_io::header::WavHeader;
 
+/// Holds .wav data using the `wav_io` crate, might support more file types in the future
 #[derive(Debug, Clone)]
 pub struct Sound {
     pub header: WavHeader,

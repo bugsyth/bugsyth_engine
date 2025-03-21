@@ -1,6 +1,9 @@
 pub use crate::{
     asset::{self, model::Model},
-    context::{Context, audio::sound::Sound},
+    context::{
+        Context,
+        audio::{audio_play_value, sound::Sound},
+    },
     error::*,
     game_state::GameState,
     glium::{
