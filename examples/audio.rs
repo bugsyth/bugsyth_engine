@@ -4,6 +4,8 @@ fn main() -> EngineResult {
     let (event_loop, mut ctx) = init("Audio", (960, 720))?;
     let game = Game {
         imgui: bugsyth_engine_imgui_support::init(&ctx.window, &ctx.display, |_, _, _| {}),
+        // Goron City theme from The Legend of Zelda: Ocarina of Time
+        // Composer: Koji Kondo
         sound: Sound::new("resources/goron.wav")?,
         speed: audio_play_value::new_audio_play_value(1.0),
         volume: audio_play_value::new_audio_play_value(1.0),

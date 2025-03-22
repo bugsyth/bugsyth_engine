@@ -9,26 +9,25 @@ readme = "README.md"
 
 [dependencies]
 # Graphics
-glium = "0.36.0"
-image = "0.25.5"
+wgpu = "0.24"
+image = "0.25"
 
 # Font 
-fontdue = "0.9.3"
+fontdue = "0.9"
 
 # File Loading
-obj = "0.10.2"
-gltf = "1.4.1"
+obj = "0.10"
 
 # Audio
-cpal = "0.15.3"
-wav_io = "0.1.15"
+cpal = "0.15"
+wav_io = "0.1"
 
 # Math
-vek = "0.17.1"
-fastrand = "2.3.0"
+vek = "0.17"
+fastrand = "2.3"
 
 # Multi Threading
-rayon = "1.10.0"
+rayon = "1.10"
 
 [dev-dependencies]
 bugsyth_engine_imgui_support = "0.4.1"
