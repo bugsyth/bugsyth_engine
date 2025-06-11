@@ -1,5 +1,5 @@
 More a framework, not an engine
-Not working on this anymore, abd most features probably won't work correctly
+Not working on this anymore, and most features won't work correctly
 
 Uses glium for rendering, fontdue for text rasterization, winit for event handling, and cpal for audio
 
